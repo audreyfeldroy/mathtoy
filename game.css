@@ -54,3 +54,27 @@ body {
 #question {
     margin: 4px;
 }
+
+#levelcomplete {
+    display: none;
+    position: absolute;
+    width: 158px;
+    height: 70px;
+    left: 60px;
+    top: 120px;
+    background: #000000;
+    color: #ffffff;    
+    padding: 26px;
+}
+
+#levelcompleteok {
+    display: none;
+    position: absolute;
+    width: 60px;
+    height: 20px;
+    left: 160px;
+    top: 320px;
+    background: #ffffff;
+    color: #000000;    
+    padding: 26px;
+}

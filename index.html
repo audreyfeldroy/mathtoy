@@ -27,9 +27,27 @@
         //if (boxval % X == 0) {
             x$(this).remove();
             score += 1;
+            x$('#scorebox').html('<p>Score: ' + score + '</p>');
             matchCount += 1;
-            x$('#scorebox').html('<p>Score: ' + score + '</p>');            
+            if (matchCount == 3) {
+                onCompleteLevel();            
+            }            
         //}
+    }
+    
+    function onLevelCompleteClicked() {
+        x$('#levelcomplete').setStyle('display', 'none');
+        x$('#scorebox').html('<p>Score: ' + score + '</p>');        
+    }
+        
+    function onCompleteLevel() {
+        x$('#levelcomplete').setStyle('display', 'inline');
+        x$('#levelcomplete').html('inner', 'Congrats, you have completed level ' + level + '.  <br/><br/>Bonus: 5');        
+        level += 1;
+        matchCount = 0;
+        totalPossibleMatches = 0;
+        score += 5;
+        x$('#levelcomplete').on('click', onLevelCompleteClicked);
     }
 
     x$(window).load(function(){
@@ -66,6 +84,8 @@
             <div id="question">
             </div>
         </div>
+    </div>
+    <div id="levelcomplete">
     </div>
   </body>
 </html>
