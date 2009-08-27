@@ -12,7 +12,7 @@
 
     var score = 0;
     var level = 1;
-    var X = 4;             // "Multiples of X?" is the condition
+    var X = 10;             // "Multiples of X?" is the condition
     var totalPossibleMatches = 0;    // How many of the choices shown match the condition, e.g. how many choices shown are multiples of 5
     var matchCount = 0;  // Running count of # of matches made
 	 
@@ -24,15 +24,21 @@
     function onChoiceBoxClicked() {
         //x$('#question').html('inner', x$(this).html().src);
         //alert('Removing ' + x$(this).text("inner"));
-        //if (boxval % X == 0) {
+        //alert(parseInt(x$(this).first().innerText));
+        boxval = parseInt(x$(this).first().innerText);
+        if (boxval % X == 0) {
             x$(this).remove();
             score += 1;
             x$('#scorebox').html('<p>Score: ' + score + '</p>');
             matchCount += 1;
-            if (matchCount == 3) {
+            if (matchCount == totalPossibleMatches) {
                 onCompleteLevel();            
             }            
-        //}
+        }
+        else {
+            score -= 1;
+            x$('#scorebox').html('<p>Score: ' + score + '</p>');
+        }
     }
     
     function onLevelCompleteClicked() {
