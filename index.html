@@ -15,14 +15,19 @@
         return result;    
     }
 
+    var score = 0;
+    var level = 1;
+    var X = 4;             // "Multiples of X?" is the condition
+    var matchCount = 0;    // How many of the choices shown match the condition, e.g. how many choices shown are multiples of 5  
     x$(window).load(function(){
-        x$('#question').html('<p>Multiples of 3?</p>');
+        x$('#question').html('<p>Multiples of ' + X + '?</p>');
         x$('#scorebox').html('<p>Score: 0</p>');
-        var i;
-        for(i=1; i<64; i++) {
-            var str = '<div id="choicebox' + i + '" class="choicebox" style="{background-color: ' + randomColor() + '}">' + i + '</div>';
+        var i, ctr;
+        for(ctr=1; ctr<64; ctr++) {
+            i = Math.floor(Math.random()*100);   // Random number between 0 and 99
+            var str = '<div id="choicebox' + ctr + '" class="choicebox" style="{background-color: ' + randomColor() + '}">' + i + '</div>';
             x$('#choices').html( 'bottom',  str );
-            x$('#choicebox' + i).setStyle('background-color', randomColor());
+            x$('#choicebox' + ctr).setStyle('background-color', randomColor());
         }
     });
 		  		
