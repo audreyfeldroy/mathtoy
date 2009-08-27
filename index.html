@@ -4,69 +4,27 @@
   <head>
     <meta name="viewport" content="width=320; user-scalable=no" />
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-    <title>PhoneGap</title>
+    <title>MathToy</title>
       <link rel="stylesheet" href="game.css" type="text/css" media="screen" title="no title" charset="utf-8">
 	  <script type="text/javascript" charset="utf-8" src="phonegap.js"></script>
 	  <script type="text/javascript" charset="utf-8" src="js/xui-0.9.0.js"></script>    	  
 	  <script type="text/javascript" charset="utf-8">
-	  
-    var deviceInfo = function(){      
-      document.getElementById("platform").innerHTML = device.platform;
-      document.getElementById("version").innerHTML = device.version;
-      document.getElementById("uuid").innerHTML = device.uuid;
+	 
+    function randomColor() {
+        var result = (Math.round(0xFFFFFF * Math.random()).toString(16) + "000000").replace(/([a-f0-9]{6}).+/, "#$1").toUpperCase();
+        return result;    
     }
-    
-    var getLocation = function() {
-      var suc = function(p){
-		    alert(p.coords.latitude + " " + p.coords.longitude);
-      };
-      var fail = function(){};
-      navigator.geolocation.getCurrentPosition(suc,fail);
-    }
-    
-    var beep = function(){
-	    navigator.notification.beep(2);
-    }
-	
-  	var vibrate = function(){
-  	  navigator.notification.vibrate(0);
-  	}
-	
-  	var getContact = function(){
-  	  var suc = function(c){ alert("Contact 4: " + c.contacts[3].name); };
-  		var fail = function(){};
-  		navigator.ContactManager.get(suc, fail);
-  	}
-  	
-  	var watchAccel = function() {
-  		var suc = function(a){
-  			document.getElementById('x').innerHTML = roundNumber(a.x);
-  			document.getElementById('y').innerHTML = roundNumber(a.y);
-  			document.getElementById('z').innerHTML = roundNumber(a.z);
-  		};
-  		var fail = function(){};
-  		var opt = {};
-  		opt.frequency = 100;
-  		timer = navigator.accelerometer.watchAcceleration(suc,fail,opt);
-  	}
-    	
-    function roundNumber(num) {
-      var dec = 3;
-      var result = Math.round(num*Math.pow(10,dec))/Math.pow(10,dec);
-      return result;
-    }
-    
-	  var preventBehavior = function(e) { 
-      e.preventDefault(); 
-    };
 
     x$(window).load(function(){
-        x$('div#question').html('<p>Multiples of 3?</p>');
-        x$('div#scorebox').html('<p>Score: 0</p>');
-        x$('div#choices').html( 'inner',  '<div class="choicebox">50</div>' );
-        x$('div#choices').html( 'bottom',  '<div class="choicebox">99</div>' );
-        x$('div#choices').html( 'bottom',  '<div class="choicebox">27</div>' );
-        x$('.choicebox').setStyle('background-color', '#99CFFF');        
+        x$('#question').html('<p>Multiples of 3?</p>');
+        x$('#scorebox').html('<p>Score: 0</p>');
+        var i;
+        for(i=1; i<64; i++) {
+            var str = '<div class="choicebox">' + i + '</div>';
+            x$('#choices').html( 'bottom',  str );
+            //x$('#' + i).setStyle('background-color', randomColor());
+        }
+        x$('.choicebox').setStyle('background-color', randomColor());   
     });
 		  		
 	  </script>
@@ -74,13 +32,11 @@
   <body>
     <div id="gamecontainer">
         <div id="question">
-            <p>question</p>
         </div>
         <div id="scorebox">
             <p>Score: ?</p>
         </div>
         <div id="choices">
-            choices
         </div>
     </div>
   </body>
