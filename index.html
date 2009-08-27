@@ -9,25 +9,40 @@
 	  <script type="text/javascript" charset="utf-8" src="phonegap.js"></script>
 	  <script type="text/javascript" charset="utf-8" src="js/xui-0.9.0.js"></script>    	  
 	  <script type="text/javascript" charset="utf-8">
-	 
-    function randomColor() {
-        var result = (Math.round(0xFFFFFF * Math.random()).toString(16) + "000000").replace(/([a-f0-9]{6}).+/, "#$1").toUpperCase();
-        return result;    
-    }
 
     var score = 0;
     var level = 1;
     var X = 4;             // "Multiples of X?" is the condition
     var matchCount = 0;    // How many of the choices shown match the condition, e.g. how many choices shown are multiples of 5  
+	 
+    function randomColor() {
+        var result = (Math.round(0xFFFFFF * Math.random()).toString(16) + "000000").replace(/([a-f0-9]{6}).+/, "#$1").toUpperCase();
+        return result;    
+    }
+    
+    function onChoiceBoxClicked() {
+        //x$('#question').html('inner', x$(this).html().src);
+        //alert('Removing ' + x$(this).text("inner"));
+        //if (boxval % X == 0) {
+            x$(this).remove();
+            score += 1;
+            x$('#scorebox').html('<p>Score: ' + score + '</p>');            
+        //}
+    }
+
     x$(window).load(function(){
         x$('#question').html('<p>Multiples of ' + X + '?</p>');
         x$('#scorebox').html('<p>Score: 0</p>');
         var i, ctr;
         for(ctr=1; ctr<64; ctr++) {
             i = Math.floor(Math.random()*100);   // Random number between 0 and 99
+            if (i % X == 0) {
+                matchCount += 1;
+            }
             var str = '<div id="choicebox' + ctr + '" class="choicebox" style="{background-color: ' + randomColor() + '}">' + i + '</div>';
             x$('#choices').html( 'bottom',  str );
             x$('#choicebox' + ctr).setStyle('background-color', randomColor());
+            x$('#choicebox' + ctr).on('click', onChoiceBoxClicked);
         }
     });
 		  		
