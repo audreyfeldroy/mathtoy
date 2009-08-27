@@ -13,7 +13,8 @@
     var score = 0;
     var level = 1;
     var X = 4;             // "Multiples of X?" is the condition
-    var matchCount = 0;    // How many of the choices shown match the condition, e.g. how many choices shown are multiples of 5  
+    var totalPossibleMatches = 0;    // How many of the choices shown match the condition, e.g. how many choices shown are multiples of 5
+    var matchCount = 0;  // Running count of # of matches made
 	 
     function randomColor() {
         var result = (Math.round(0xFFFFFF * Math.random()).toString(16) + "000000").replace(/([a-f0-9]{6}).+/, "#$1").toUpperCase();
@@ -26,18 +27,20 @@
         //if (boxval % X == 0) {
             x$(this).remove();
             score += 1;
+            matchCount += 1;
             x$('#scorebox').html('<p>Score: ' + score + '</p>');            
         //}
     }
 
     x$(window).load(function(){
-        x$('#question').html('<p>Multiples of ' + X + '?</p>');
+        x$('#question').html('Multiples of ' + X + '?');
+        x$('#clock').html('Time: 2:00');
         x$('#scorebox').html('<p>Score: 0</p>');
         var i, ctr;
-        for(ctr=1; ctr<64; ctr++) {
+        for(ctr=1; ctr<57; ctr++) {
             i = Math.floor(Math.random()*100);   // Random number between 0 and 99
             if (i % X == 0) {
-                matchCount += 1;
+                totalPossibleMatches += 1;
             }
             var str = '<div id="choicebox' + ctr + '" class="choicebox" style="{background-color: ' + randomColor() + '}">' + i + '</div>';
             x$('#choices').html( 'bottom',  str );
@@ -50,12 +53,18 @@
   </head>
   <body>
     <div id="gamecontainer">
-        <div id="question">
-        </div>
-        <div id="scorebox">
-            <p>Score: ?</p>
+        <div id="topbar" class="infobar">
+            <div id="clock">
+            </div>
+            <div id="scorebox">
+                <p>Score: ?</p>
+            </div>
         </div>
         <div id="choices">
+        </div>
+        <div id="bottombar" class="infobar">
+            <div id="question">
+            </div>
         </div>
     </div>
   </body>
