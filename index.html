@@ -21,6 +21,11 @@
         return result;    
     }
     
+    function updateScore(deltaScore) {
+        score += deltaScore;
+        x$('#scorebox').html('Score: ' + score);        
+    }
+    
     function onChoiceBoxClicked() {
         //x$('#question').html('inner', x$(this).html().src);
         //alert('Removing ' + x$(this).text("inner"));
@@ -28,38 +33,24 @@
         boxval = parseInt(x$(this).first().innerText);
         if (boxval % X == 0) {
             x$(this).remove();
-            score += 1;
-            x$('#scorebox').html('<p>Score: ' + score + '</p>');
+            updateScore(1);
             matchCount += 1;
             if (matchCount == totalPossibleMatches) {
                 onCompleteLevel();            
             }            
         }
         else {
-            score -= 1;
-            x$('#scorebox').html('<p>Score: ' + score + '</p>');
+            updateScore(-1);
         }
     }
-    
-    function onLevelCompleteClicked() {
-        x$('#levelcomplete').setStyle('display', 'none');
-        x$('#scorebox').html('<p>Score: ' + score + '</p>');        
-    }
-        
-    function onCompleteLevel() {
-        x$('#levelcomplete').setStyle('display', 'inline');
-        x$('#levelcomplete').html('inner', 'Congrats, you have completed level ' + level + '.  <br/><br/>Bonus: 5');        
-        level += 1;
-        matchCount = 0;
-        totalPossibleMatches = 0;
-        score += 5;
-        x$('#levelcomplete').on('click', onLevelCompleteClicked);
-    }
 
-    x$(window).load(function(){
+    function startNewLevel() {
+        // Clear #choices of all #choiceboxes
+        x$('div.choicebox').remove();
+         
         x$('#question').html('Multiples of ' + X + '?');
         x$('#clock').html('Time: 2:00');
-        x$('#scorebox').html('<p>Score: 0</p>');
+        updateScore(0);
         var i, ctr;
         for(ctr=1; ctr<57; ctr++) {
             i = Math.floor(Math.random()*100);   // Random number between 0 and 99
@@ -70,7 +61,27 @@
             x$('#choices').html( 'bottom',  str );
             x$('#choicebox' + ctr).setStyle('background-color', randomColor());
             x$('#choicebox' + ctr).on('click', onChoiceBoxClicked);
-        }
+        }    
+    }
+    
+    function onLevelCompleteClicked() {
+        startNewLevel();        // TODO: test if there is enough lag to show an animation/msg while the user waits 
+        //x$('#levelcomplete').html('bottom', '<br/><br/>Saving your score...');
+        x$('#levelcomplete').setStyle('display', 'none');
+        updateScore(5);        
+    }
+        
+    function onCompleteLevel() {
+        x$('#levelcomplete').setStyle('display', 'inline');
+        x$('#levelcomplete').html('inner', 'Congrats, you have completed level ' + level + '.  <br/><br/>Bonus: 5');        
+        level += 1;
+        matchCount = 0;
+        totalPossibleMatches = 0;
+        x$('#levelcomplete').on('click', onLevelCompleteClicked);        
+    }
+
+    x$(window).load(function(){
+        startNewLevel();
     });
 		  		
 	  </script>
