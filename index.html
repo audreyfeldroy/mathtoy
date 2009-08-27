@@ -20,11 +20,10 @@
         x$('#scorebox').html('<p>Score: 0</p>');
         var i;
         for(i=1; i<64; i++) {
-            var str = '<div class="choicebox">' + i + '</div>';
+            var str = '<div id="choicebox' + i + '" class="choicebox" style="{background-color: ' + randomColor() + '}">' + i + '</div>';
             x$('#choices').html( 'bottom',  str );
-            //x$('#' + i).setStyle('background-color', randomColor());
+            x$('#choicebox' + i).setStyle('background-color', randomColor());
         }
-        x$('.choicebox').setStyle('background-color', randomColor());   
     });
 		  		
 	  </script>
