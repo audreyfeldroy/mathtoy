@@ -13,7 +13,7 @@
     var mainClock;
     var bonusVal = 0;
     var score = 0;
-    var bonusStart = 10;
+    var bonusStart = 100;
     var bonus = bonusStart;
     var level = 1;
     var maxChoice = 50;
@@ -21,6 +21,10 @@
     var bonus = 0;
     var totalPossibleMatches = 0;    // How many of the choices shown match the condition, e.g. how many choices shown are multiples of 5
     var matchCount = 0;              // Running count of # of matches made
+	
+	function contrast(color){ return '#' + 
+        (Number('0x'+color.substr(1)).toString(10) > 0xffffff/2 ? '000000' :  'ffffff'); 
+    }
 	 
     function randomColor() {
         var result = (Math.round(0xFFFFFF * Math.random()).toString(16) + "000000").replace(/([a-f0-9]{6}).+/, "#$1").toUpperCase();
@@ -79,9 +83,12 @@
             if (i % X == 0) {
                 totalPossibleMatches += 1;
             }
-            var str = '<div id="choicebox' + ctr + '" class="choicebox" style="{background-color: ' + randomColor() + '}">' + i + '</div>';
+            var bg = randomColor();
+            var fg = contrast(bg);
+            var str = '<div id="choicebox' + ctr + '" class="choicebox">' + i + '</div>';
             x$('#choices').html( 'bottom',  str );
-            x$('#choicebox' + ctr).setStyle('background-color', randomColor());
+            x$('#choicebox' + ctr).setStyle('background-color', bg);
+            x$('#choicebox' + ctr).setStyle('color', fg);
             x$('#choicebox' + ctr).on('click', onChoiceBoxClicked);
         }    
         if (totalPossibleMatches == 0) {
