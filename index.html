@@ -10,34 +10,35 @@
 	  <script type="text/javascript" charset="utf-8" src="js/xui-0.9.0.js"></script>    	  
 	  <script type="text/javascript" charset="utf-8">
 
-    var mainclock;
-    var clockRunning = false;
-    var clockval = 0;
+    var mainClock;
+    var bonusVal = 0;
     var score = 0;
-    var bonusCutoffTime = 50;
-    var bonusCutoffMultiplier = .1;
+    var bonusStart = 10;
+    var bonus = bonusStart;
     var level = 1;
-    var maxchoice = 50;
+    var maxChoice = 50;
     var X = 10;                      // "Multiples of X?" is the condition
     var bonus = 0;
     var totalPossibleMatches = 0;    // How many of the choices shown match the condition, e.g. how many choices shown are multiples of 5
-    var matchCount = 0;  // Running count of # of matches made
+    var matchCount = 0;              // Running count of # of matches made
 	 
     function randomColor() {
         var result = (Math.round(0xFFFFFF * Math.random()).toString(16) + "000000").replace(/([a-f0-9]{6}).+/, "#$1").toUpperCase();
         return result;    
     }
     
-    function updateClock() {
-        clockval += 1;
-        x$('#clock').html('inner', clockval + '');
+    function updateBonus(deltaBonus) {
+        bonusVal += deltaBonus;
+        if (bonusVal < 0) {
+            x$('#clock').html('inner', 'Penalty: ' + bonusVal + '');
+        }
+        else {
+            x$('#clock').html('inner', 'Bonus: ' + bonusVal + '');
+        }
     }
     
     function runClock() {
-        if (clockRunning) {
-            updateClock();
-            mainclock = self.setTimeout(runClock, 1000);
-        }
+        updateBonus(-1);
     }
     
     function updateScore(deltaScore) {
@@ -45,12 +46,13 @@
         if (score < 0) {
             score = 0;
         }
-        x$('#scorebox').html('Score: ' + score);                
+        x$('#scorebox').html('Score: ' + score + '&nbsp;&nbsp;');                
     }
     
-    function onChoiceBoxClicked() {
-        boxval = parseInt(x$(this).first().innerText);
+    function onChoiceBoxClicked() {        
+        var boxval = parseInt(x$(this).first().innerText);
         if (boxval % X == 0) {
+            navigator.notification.beep(2);
             x$(this).remove();
             updateScore(1);
             matchCount += 1;
@@ -59,19 +61,21 @@
             }            
         }
         else {
-            updateScore(-1);
+            navigator.notification.vibrate(100);
+            updateScore(-3);
         }
     }
 
     function startNewLevel() {
-        x$('div.choicebox').remove();   // Clear #choices of all #choiceboxes         
-        X = Math.floor(Math.random()*11) + 2;   // Random number between 2 and 12
+        x$('div.choicebox').remove();                       // Clear #choices of all #choiceboxes         
+        X = Math.floor(Math.random()*11) + 2;               // Random number between 2 and 12
         x$('#question').html('Multiples of ' + X + '?');
-        clockval = 0;
+        bonusVal = bonusStart;
         updateScore(0);
+        updateBonus(0);
         var i, ctr;
         for(ctr=1; ctr<26; ctr++) {
-            i = Math.floor(Math.random()*(maxchoice + 1));   // Random number between 0 and 99
+            i = Math.floor(Math.random()*(maxChoice + 1));  // Random number between 0 and 99
             if (i % X == 0) {
                 totalPossibleMatches += 1;
             }
@@ -83,42 +87,36 @@
         if (totalPossibleMatches == 0) {
             x$('#choicebox25').first().innerText = '0';
             totalPossibleMatches += 1;
-            alert ('Last element is 0');
         }
-        clockRunning = true;
-        mainclock = setTimeout(runClock, 0);
-        
+        mainClock = setInterval(runClock, 4000);        
     }
     
     function onLevelCompleteClicked() {
-        updateScore(bonus);
-        startNewLevel();        // TODO: test if there is enough lag to show an animation/msg while the user waits 
+        updateScore(bonusVal);
+        startNewLevel();        // TODO: test if there is enough lag to show an animation/msg while the user waits
+        x$('#fulloverlay').setStyle('display', 'none'); 
         x$('#levelcomplete').setStyle('display', 'none');        
     }
         
     function onCompleteLevel() {
-        clockRunning = false;
-/*        if (score + bonusCutoffMultiplier*(bonusCutoffTime - clockval) < 0) {
-            bonus = 0 - score;
+        clearInterval(mainClock);
+        x$('#fulloverlay').setStyle('display', 'inline');
+        x$('#levelcomplete').setStyle('display', 'inline');
+        if (bonusVal < 0) {
+            x$('#levelcomplete').html('inner', 'Congrats, you have completed level ' + level + '.  <br/><br/>Penalty: ' + bonusVal);
         }
         else {
-            bonus = Math.floor(bonusCutoffMultiplier*(bonusCutoffTime - clockval));
+            x$('#levelcomplete').html('inner', 'Congrats, you have completed level ' + level + '.  <br/><br/>Bonus: ' + bonusVal);        
         }
-*/
-        var scoreAfter = Math.floor(score + bonusCutoffMultiplier*(bonusCutoffTime - clockval));
-        if (scoreAfter < 0)
-            scoreAfter = 0;
-        x$('#levelcomplete').setStyle('display', 'inline');
-        x$('#levelcomplete').html('inner', 'Congrats, you have completed level ' + level + '.  <br/><br/>Score before: ' + score + '<br/>Score after: ' + scoreAfter);        
         level += 1;
         matchCount = 0;
         totalPossibleMatches = 0;
-        x$('#levelcomplete').on('click', onLevelCompleteClicked);        
+        x$('#fulloverlay').on('click', onLevelCompleteClicked);        
+        x$('#levelcomplete').on('click', onLevelCompleteClicked);
     }
 
     x$(window).load(function(){
         startNewLevel();
-//        mainclock = setTimeout(runClock, 0);
     });
 		  		
 	  </script>
@@ -138,6 +136,8 @@
             <div id="question">
             </div>
         </div>
+    </div>
+    <div id="fulloverlay">
     </div>
     <div id="levelcomplete">
     </div>
