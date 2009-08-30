@@ -56,9 +56,11 @@
     function onChoiceBoxClicked() {        
         var boxval = parseInt(x$(this).first().innerText);
         if (boxval % X == 0) {
-            navigator.notification.beep(2);
+            // Sound doesn't work. TODO fix it.
+            // soundFile = new Media("on.mp3");
+            // soundFile.play();  
             x$(this).remove();
-            updateScore(1);
+            updateScore(5);
             matchCount += 1;
             if (matchCount == totalPossibleMatches) {
                 onCompleteLevel();            
@@ -66,7 +68,7 @@
         }
         else {
             navigator.notification.vibrate(100);
-            updateScore(-3);
+            updateScore(-20);
         }
     }
 
@@ -100,7 +102,7 @@
     
     function onLevelCompleteClicked() {
         updateScore(bonusVal);
-        startNewLevel();        // TODO: test if there is enough lag to show an animation/msg while the user waits
+        startNewLevel(); 
         x$('#fulloverlay').setStyle('display', 'none'); 
         x$('#levelcomplete').setStyle('display', 'none');        
     }
@@ -122,8 +124,34 @@
         x$('#levelcomplete').on('click', onLevelCompleteClicked);
     }
 
+    var watchAccel = function() {
+        var suc = function(a){
+            if (-2 < a.x && a.x < 2
+              && 8 < a.y && a.y < 10
+              && -2 < a.z && a.z < 2) {
+                updateScore(-10);   // Costs 10 pts 
+                navigator.notification.beep(1);
+                x$('div.choicebox').each(function() {
+//                    var boxstr = this.first().innerText;          // Note: each() doesn't seem to work as expected.
+//                    var boxval = parseInt(boxstr);                // http://code.google.com/p/xui-js/issues/detail?id=4
+//                    alert ("boxval: " + boxval);                
+//                    if (boxval % X == 0) {     // Found match
+//                        alert("Found match " + boxval);
+                        this.setStyle('background-color', '#000000');
+                        this.setStyle('color', '#ffffff');
+//                    }                    
+                });
+            }
+        };
+        var fail = function(){};
+        var opt = {};
+        opt.frequency = 500;
+        timer = navigator.accelerometer.watchAcceleration(suc,fail,opt);
+    }
+
     x$(window).load(function(){
         startNewLevel();
+        watchAccel();
     });
 		  		
 	  </script>
